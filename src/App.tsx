@@ -1,13 +1,60 @@
-import {Container, Botao} from "./AppStyles"
-import * as C from "./AppStyles"
+import {ChangeEvent, useState} from 'react'
+import { usePeopleList } from './reducers/peopleList'
 
 const App = () => {
+
+const [list, dispatch] = usePeopleList()
+  const [nameInput, setNameInput] = useState('')
+  
+const handleAddButton = () => {
+  if (nameInput) {
+    dispatch({
+      type: 'ADD',
+        payload: {
+        name: nameInput
+      }
+    })
+    setNameInput('')
+  }
+}
+  
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setNameInput(e.target.value);
+  }
+
+  const deletePerson = (id: string) => {
+    dispatch({
+      type: 'DEL',
+      payload: {
+        id: id
+      }
+    })
+  }
+
+  const handleOrderButton = () => {
+    dispatch({
+      type: 'ORDER'
+    })
+  }
+
   return (
-    <C.Container>
-      Texto do Componente
-      <C.Botao>Clique Aqui</C.Botao>
-    </C.Container>
+    <div className="p-5">
+      <input className="border2" type="text" value={nameInput} onChange={handleInputChange} />
+      <button onClick={handleAddButton}>Adicionar</button>
+      <hr />
+
+      <button onClick={handleOrderButton}>Ordenar</button>
+      Lista de Pessoas:
+      <ul>
+        {list.map((item, index) => (
+          <li key={index}>
+            {item.name}
+            <button onClick={()=> deletePerson(item.id)}>[deletar]</button>
+          </li>
+        ))}
+      </ul>
+    </div>
   )
 }
 
-export default App
+export default App;
